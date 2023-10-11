@@ -2,6 +2,8 @@ import React from "react";
 import Faq from "../src/components/Faq/index";
 import PageHead from "../src/components/Helpers/PageHead";
 
+import { fetch as fetch2 } from 'fetch-h2';
+
 export default function faqPage({ data }) {
   return (
     <>
@@ -12,7 +14,7 @@ export default function faqPage({ data }) {
 }
 export async function getServerSideProps() {
   // Fetch data from external API
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/faq`);
+  const res = await fetch2(`${process.env.NEXT_PUBLIC_BASE_URL}api/faq`);
   const data = await res.json();
   return { props: { data } };
 }

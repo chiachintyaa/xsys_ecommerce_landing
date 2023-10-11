@@ -11,7 +11,7 @@ export default function termsConditionPage({ data }) {
 }
 export async function getServerSideProps() {
     // Fetch data from external API
-    const res = await fetch(
+    const res = await fetch2(
         `${process.env.NEXT_PUBLIC_BASE_URL}api/seller-terms-conditoins`
     );
     const data = await res.json();

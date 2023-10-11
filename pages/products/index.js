@@ -3,6 +3,8 @@ import AllProductPage from "../../src/components/AllProductPage/index";
 import PageHead from "../../src/components/Helpers/PageHead";
 import {useRouter} from "next/router";
 
+import { fetch as fetch2 } from 'fetch-h2';
+
 export default function AllProductsPageData(data) {
   const { seoSetting } = data.data;
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function AllProductsPageData(data) {
 }
 export const getServerSideProps = async (context) => {
   try {
-    const res = await fetch(
+    const res = await fetch2(
         `${process.env.NEXT_PUBLIC_BASE_URL}api/product?${
             context.query.category
                 ? `category=${context.query.category}`

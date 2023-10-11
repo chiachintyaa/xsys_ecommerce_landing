@@ -2,6 +2,9 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import PageHead from "../../src/components/Helpers/PageHead";
 import SingleProductPage from "../../src/components/SingleProductPage";
+
+import { fetch as fetch2 } from 'fetch-h2';
+
 const SingleProduct = ({ data }) => {
   const router = useRouter();
   useEffect(() => {
@@ -21,7 +24,7 @@ const SingleProduct = ({ data }) => {
   );
 };
 export const getServerSideProps = async (context) => {
-  const res = await fetch(
+  const res = await fetch2(
     `${process.env.NEXT_PUBLIC_BASE_URL}api/product/${context.query.slug}`
   );
   const data = await res.json();

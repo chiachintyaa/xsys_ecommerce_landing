@@ -2,6 +2,9 @@ import React from "react";
 import PageHead from "../src/components/Helpers/PageHead";
 import Layout from "../src/components/Partials/Layout";
 import Sellers from "../src/components/Sellers/index";
+
+import { fetch as fetch2 } from 'fetch-h2';
+
 export default function SellersPage(data) {
   const { seoSetting } = data.data;
   return (
@@ -17,7 +20,7 @@ export default function SellersPage(data) {
   );
 }
 export const getServerSideProps = async (context) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/sellers`);
+  const res = await fetch2(`${process.env.NEXT_PUBLIC_BASE_URL}api/sellers`);
   const data = await res.json();
   return {
     props: {

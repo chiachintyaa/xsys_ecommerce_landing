@@ -142,10 +142,16 @@ export default {
       url: `cart-item-decrement/${id}?token=${token}`,
     }),
   deleteAddress: (id, token) =>
-    instance({
-      method: "DELETE",
-      url: `user/address/${id}?token=${token}`,
-    }),
+  instance({
+    method: "DELETE",
+    url: `user/address/${id}?token=${token}`,
+  }),
+  getMidtransToken: (data, token) =>
+  instance({
+    method: "POST",
+    url: `user/midtrans/transtoken?token=${token}`,
+    data,
+  }),
   cashOnDelivery: (data, token) =>
     instance({
       method: "POST",

@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import Blog from "../../src/components/Blogs/Blog/index.jsx";
 import PageHead from "../../src/components/Helpers/PageHead";
 
+import { fetch as fetch2 } from 'fetch-h2';
+
 const Blogpage = ({ data }) => {
   const router = useRouter();
   useEffect(() => {
@@ -19,7 +21,7 @@ const Blogpage = ({ data }) => {
 };
 export const getServerSideProps = async (context) => {
   if (context && context.query.slug) {
-    const res = await fetch(
+    const res = await fetch2(
       `${process.env.NEXT_PUBLIC_BASE_URL}api/blog/${context.query.slug}`
     );
     const data = await res.json();

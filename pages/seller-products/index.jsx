@@ -3,6 +3,8 @@ import isMultivendor from "../../Middleware/isMultivendor";
 import AllProductPage from "../../src/components/AllProductPage/index";
 import PageHead from "../../src/components/Helpers/PageHead";
 
+import { fetch as fetch2 } from 'fetch-h2';
+
 function sellersProductsPage(data) {
   const sellerInfo = {
     seller: data.data && data.data.seller && data.data.seller,
@@ -22,7 +24,7 @@ function sellersProductsPage(data) {
   );
 }
 export const getServerSideProps = async (context) => {
-  const res = await fetch(
+  const res = await fetch2(
     `${process.env.NEXT_PUBLIC_BASE_URL}api/sellers/${context.query.seller}`
   );
   const data = await res.json();
