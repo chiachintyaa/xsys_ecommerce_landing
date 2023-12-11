@@ -1,5 +1,5 @@
 import React from "react";
-import CheakoutPage from "./../src/components/CheakoutPage/index";
+import CheckoutPage from "./../src/components/CheckoutPage/index";
 import PageHead from "../src/components/Helpers/PageHead";
 import Layout from "../src/components/Partials/Layout";
 
@@ -8,7 +8,7 @@ function checkout() {
     <>
       <PageHead title="Checkout" />
       <Layout childrenClasses="pt-0 pb-0">
-        <CheakoutPage />
+        <CheckoutPage />
       </Layout>
     </>
   );

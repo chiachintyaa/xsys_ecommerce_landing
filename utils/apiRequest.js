@@ -149,7 +149,7 @@ export default {
   getMidtransToken: (data, token) =>
   instance({
     method: "POST",
-    url: `user/midtrans/transtoken?token=${token}`,
+    url: `user/midtrans/snaptoken?token=${token}`,
     data,
   }),
   cashOnDelivery: (data, token) =>

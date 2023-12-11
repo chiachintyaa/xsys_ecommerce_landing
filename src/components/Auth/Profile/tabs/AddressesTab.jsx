@@ -174,7 +174,7 @@ export default function AddressesTab() {
               setState(parseInt(res.data.address.state_id));
               setcity(parseInt(res.data.address.city_id));
               await getState(res.data.address.country);
-              await getcity(res.data.address.country_state);
+              await getcity(res.data.address.state);
               setNewAddress(!newAddress);
             }
           }
@@ -712,7 +712,7 @@ export default function AddressesTab() {
                           <p>{ServeLangItem()?.State}:</p>
                         </td>
                         <td className="text-base text-qblack line-clamp-1 font-medium">
-                          {item.country_state.name}
+                          {item.state.name}
                         </td>
                       </tr>
                       <tr className="flex mb-3">
