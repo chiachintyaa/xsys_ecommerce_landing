@@ -146,10 +146,33 @@ export default {
     method: "DELETE",
     url: `user/address/${id}?token=${token}`,
   }),
+  getOrderID: (token) => 
+  instance({
+    method: "POST",
+    url: `user/midtrans/order-id?token=${token}`,
+  }),
   getMidtransToken: (data, token) =>
   instance({
     method: "POST",
     url: `user/midtrans/snaptoken?token=${token}`,
+    data,
+  }),
+  postOrderSuccess: (data, token) =>
+  instance({
+    method: "POST",
+    url: `payment/midtrans/finished-payment?token=${token}`,
+    data,
+  }),
+  postOrderPending: (data, token) =>
+  instance({
+    method: "POST",
+    url: `payment/midtrans/unfinished-payment?token=${token}`,
+    data,
+  }),
+  postOrderFailed: (data, token) =>
+  instance({
+    method: "POST",
+    url: `payment/midtrans/error-payment?token=${token}`,
     data,
   }),
   cashOnDelivery: (data, token) =>

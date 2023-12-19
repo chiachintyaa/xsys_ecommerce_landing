@@ -70,6 +70,7 @@ function CheckoutPage() {
   const [discountCoupon, setDiscountCoupon] = useState(0);
   const [checkoutData, setCheckoutData] = useState(null);
   const [midtransToken, setMidtransToken] = useState(null);
+  const [orderID, setOrderID] = useState("");
 
   useEffect(() => {
     if (couponCode) {
@@ -577,56 +578,136 @@ function CheckoutPage() {
       if (selectedBilling && selectedShipping) {
         if (selectedRule) {
           // console.log(checkoutData);
-          var body = {
-            'transaction_details': {
-              'order_id': "aaabbbcc",
-              'gross_amount': parseFloat(totalPrice).toFixed(2),
-            },
-            'customer_details': {
-                'first_name': 'budi',
-                'last_name': 'pratama',
-                'email': 'budi.pra@example.com',
-                'phone': '08111222333',
-            },
-            'address_shipping': selectedShipping,
-            'address_billing': selectedBilling
-          };
-          console.log("body:");
-          console.log(body);
 
-          await apiRequest
-          .getMidtransToken(
-            body,
-            auth().access_token
-          )
-          .then((res) => {
-            // console.log(res);
-            if (res.data) {
-              setMidtransToken(res.data.token);
-              window.snap.pay(res.data.token);
-              // , {
-              //   onSuccess: function (result3) {
-              //     /* You may add your own implementation here */
-              //     alert("payment success!"); console.log(result3);
-              //   },
-              //   onPending: function (result3) {
-              //     /* You may add your own implementation here */
-              //     alert("wating your payment!"); console.log(result3);
-              //   },
-              //   onError: function (result3) {
-              //     /* You may add your own implementation here */
-              //     alert("payment failed!"); console.log(result3);
-              //   },
-              //   onClose: function () {
-              //     /* You may add your own implementation here */
-              //     alert('you closed the popup without finishing the payment');
-              //   }
-              // });
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            toast.success(err.response && err.response.message);
+          apiRequest.profileInfo(auth().access_token).then((profile) => {
+            console.log("my profile:");
+            console.log(profile);
+
+            var userdata = profile.data.personInfo;
+            console.log("userdata:");
+            console.log(userdata);
+
+            apiRequest.getOrderID(auth().access_token).then((result1) => {
+              console.log("order id result:");
+              console.log(result1);
+              setOrderID(result1.data.orderid_next);
+
+              var body = {
+                'transaction_details': {
+                  'order_id': result1.data.orderid_next,
+                  'gross_amount': parseFloat(totalPrice).toFixed(2),
+                },
+                'customer_details': {
+                  'first_name': userdata.name.split(" ")[0],
+                  'last_name': userdata.name.split(" ")[1],
+                  'email': userdata.email,
+                  'phone': userdata.phone,
+                },
+                'address_shipping': selectedShipping,
+                'address_billing': selectedBilling
+              };
+              console.log("body:");
+              console.log(body);
+    
+              apiRequest
+              .getMidtransToken(
+                body,
+                auth().access_token
+              )
+              .then((res) => {
+                // console.log(res);
+                if (res.data) {
+                  setMidtransToken(res.data.token);
+                  window.snap.pay(res.data.token, {
+                    onSuccess: function (result3) {
+                      /* You may add your own implementation here */
+                      alert("payment success!"); console.log(result3);
+                      // var bodySuccess = {
+                      //   'items': res.data.items,
+                      //   'detail': result3,
+                      //   'requestdata': body,
+                      //   'userdata': userdata, 
+                      //   'checkoutData': checkoutData,
+                      //   shipping_address_id: selectedShipping,
+                      //   billing_address_id: selectedBilling,
+                      //   shipping_method_id: parseInt(selectedRule),
+                      //   coupon: couponCode && couponCode.code,
+                      // };
+                      // console.log("success");
+                      // console.log(bodySuccess);
+
+                      // apiRequest
+                      // .postOrderSuccess(
+                      //   bodySuccess,
+                      //   auth().access_token
+                      // )
+                      // .then((post_result) => {
+                      //   // console.log(res);
+                      //   if (post_result) {
+                      //     console.log("success");
+                      //     console.log(post_result);
+                      //   }
+                      // });
+
+                    },
+                    onPending: function (result3) {
+                      /* You may add your own implementation here */
+                      alert("wating your payment!"); console.log(result3);
+                      // var bodyPending = {
+                      //   'items': res.data.items,
+                      //   'detail': result3
+                      // };
+                      // console.log("pending");
+                      // console.log(bodyPending);
+
+                      // apiRequest
+                      // .postOrderPending(
+                      //   bodyPending,
+                      //   auth().access_token
+                      // )
+                      // .then((post_result) => {
+                      //   // console.log(res);
+                      //   if (post_result) {
+                      //     console.log("pending");
+                      //     console.log(post_result);
+                      //   }
+                      // });
+                    },
+                    onError: function (result3) {
+                      /* You may add your own implementation here */
+                      alert("payment failed!"); console.log(result3);
+                      // var bodyError = {
+                      //   'items': res.data.items,
+                      //   'detail': result3
+                      // };
+                      // console.log("error:");
+                      // console.log(bodyError);
+
+                      // apiRequest
+                      // .postOrderFailed(
+                      //   bodyError,
+                      //   auth().access_token
+                      // )
+                      // .then((post_result) => {
+                      //   // console.log(res);
+                      //   if (post_result) {
+                      //     console.log("error");
+                      //     console.log(post_result);
+                      //   }
+                      // });
+                    },
+                    onClose: function () {
+                      /* You may add your own implementation here */
+                      alert('you closed the popup without finishing the payment');
+                    }
+                  });
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+                toast.success(err.response && err.response.message);
+              });
+            });
           });
         } else {
           toast.error(ServeLangItem()?.Please_Select_Shipping_Rule);

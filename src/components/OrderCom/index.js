@@ -429,7 +429,7 @@ function OrderCom() {
                         <span>
                           {parseFloat(resData.total_amount) -
                             parseFloat(resData.shipping_cost) +
-                            parseFloat(resData.coupon_coast)}
+                            parseFloat(resData.coupon_cost)}
                         </span>
                       </p>
                     </div>
@@ -439,7 +439,7 @@ function OrderCom() {
                       </p>
                       <p className="text-sm text-qred">
                         -<span>{currency_icon}</span>
-                        <span>{resData.coupon_coast}</span>
+                        <span>{resData.coupon_cost}</span>
                       </p>
                     </div>
                     <div className="flex justify-between font-semibold w-[200px]">
