@@ -74,6 +74,10 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (couponCode) {
+      console.log("couponCode");
+      console.log(couponCode);
+      console.log("discount");
+      console.log(discountCoupon);
       if (couponCode.offer_type === "2") {
         let price = totalPrice - parseInt(couponCode.discount);
         setDiscountCoupon(totalPrice - price);
@@ -578,6 +582,10 @@ function CheckoutPage() {
       if (selectedBilling && selectedShipping) {
         if (selectedRule) {
           // console.log(checkoutData);
+          console.log("couponCode");
+          console.log(couponCode);
+          console.log("discount");
+          console.log(discountCoupon);
 
           apiRequest.profileInfo(auth().access_token).then((profile) => {
             console.log("my profile:");
@@ -595,7 +603,7 @@ function CheckoutPage() {
               var body = {
                 'transaction_details': {
                   'order_id': result1.data.orderid_next,
-                  'gross_amount': parseFloat(totalPrice).toFixed(2),
+                  'gross_amount': (mainTotalPrice - discountCoupon).toFixed(2),
                 },
                 'customer_details': {
                   'first_name': userdata.name.split(" ")[0],
@@ -604,7 +612,8 @@ function CheckoutPage() {
                   'phone': userdata.phone,
                 },
                 'address_shipping': selectedShipping,
-                'address_billing': selectedBilling
+                'address_billing': selectedBilling,
+                'cartProducts': cart.cartProducts
               };
               console.log("body:");
               console.log(body);
@@ -615,86 +624,123 @@ function CheckoutPage() {
                 auth().access_token
               )
               .then((res) => {
-                // console.log(res);
+                console.log(res);
                 if (res.data) {
                   setMidtransToken(res.data.token);
                   window.snap.pay(res.data.token, {
                     onSuccess: function (result3) {
                       /* You may add your own implementation here */
                       alert("payment success!"); console.log(result3);
-                      // var bodySuccess = {
-                      //   'items': res.data.items,
-                      //   'detail': result3,
-                      //   'requestdata': body,
-                      //   'userdata': userdata, 
-                      //   'checkoutData': checkoutData,
-                      //   shipping_address_id: selectedShipping,
-                      //   billing_address_id: selectedBilling,
-                      //   shipping_method_id: parseInt(selectedRule),
-                      //   coupon: couponCode && couponCode.code,
-                      // };
-                      // console.log("success");
-                      // console.log(bodySuccess);
+                      var parameter = {
+                        order_id: result3.order_id,
+                        status_code: result3.status_code,
+                        transaction_status: result3.transaction_status,
+                        response: result3,
+                        result: {
+                          snaptoken: res.data.token,
+                          redirect_url: res.data.redirect_url,
+                          user: {
+                            user_id: userdata.id,
+                            address_shipping: selectedShipping,
+                            address_billing: selectedBilling,
+                            shipping_method_id: parseInt(selectedRule),
+                            coupon: couponCode && couponCode.code
+                          },
+                          payment: {
+                            payment_type: result3.payment_type,
+                            status_message: result3.status_message,
+                            transaction_status: result3.transaction_status,
+                            transaction_time: result3.transaction_time,
+                            transaction_id: result3.transaction_id,
+                            gross_amount: (mainTotalPrice - discountCoupon).toFixed(2)
+                          }
+                        }
+                      };
+                      console.log("success");
+                      console.log(parameter);
 
-                      // apiRequest
-                      // .postOrderSuccess(
-                      //   bodySuccess,
-                      //   auth().access_token
-                      // )
-                      // .then((post_result) => {
-                      //   // console.log(res);
-                      //   if (post_result) {
-                      //     console.log("success");
-                      //     console.log(post_result);
-                      //   }
-                      // });
+                      apiRequest
+                      .postOrderSuccess(
+                        parameter,
+                        auth().access_token
+                      )
+                      .then((post_result) => {
+                        // console.log(res);
+                        if (post_result) {
+                          console.log("success");
+                          console.log(post_result);
+                        }
+                      });
 
                     },
                     onPending: function (result3) {
                       /* You may add your own implementation here */
-                      alert("wating your payment!"); console.log(result3);
-                      // var bodyPending = {
-                      //   'items': res.data.items,
-                      //   'detail': result3
-                      // };
-                      // console.log("pending");
-                      // console.log(bodyPending);
+                      alert("wating for your payment!"); console.log(result3);
+                      var parameter = {
+                        order_id: result3.order_id,
+                        status_code: result3.status_code,
+                        transaction_status: result3.transaction_status,
+                        response: result3,
+                        result: {
+                          snaptoken: res.data.token,
+                          redirect_url: res.data.redirect_url,
+                          user: {
+                            user_id: userdata.id,
+                            address_shipping: selectedShipping,
+                            address_billing: selectedBilling,
+                            shipping_method_id: parseInt(selectedRule),
+                            coupon: couponCode && couponCode.code
+                          },
+                          payment: {
+                            payment_type: result3.payment_type,
+                            status_message: result3.status_message,
+                            transaction_status: result3.transaction_status,
+                            transaction_time: result3.transaction_time,
+                            transaction_id: result3.transaction_id,
+                            gross_amount: (mainTotalPrice - discountCoupon).toFixed(2)
+                          }
+                        }
+                      };
+                      console.log("pending");
+                      console.log(parameter);
 
-                      // apiRequest
-                      // .postOrderPending(
-                      //   bodyPending,
-                      //   auth().access_token
-                      // )
-                      // .then((post_result) => {
-                      //   // console.log(res);
-                      //   if (post_result) {
-                      //     console.log("pending");
-                      //     console.log(post_result);
-                      //   }
-                      // });
+                      apiRequest
+                      .postOrderPending(
+                        parameter,
+                        auth().access_token
+                      )
+                      .then((post_result) => {
+                        // console.log(res);
+                        if (post_result) {
+                          console.log("pending");
+                          console.log(post_result);
+                        }
+                      });
                     },
                     onError: function (result3) {
                       /* You may add your own implementation here */
                       alert("payment failed!"); console.log(result3);
-                      // var bodyError = {
-                      //   'items': res.data.items,
-                      //   'detail': result3
-                      // };
-                      // console.log("error:");
-                      // console.log(bodyError);
+                      var bodyError = {
+                        order_id: result3.order_id,
+                        status_code: result3.status_code,
+                        transaction_status: result3.transaction_status,
+                        response: result3
+                      };
+                      console.log("error:");
+                      console.log(bodyError);
 
-                      // apiRequest
-                      // .postOrderFailed(
-                      //   bodyError,
-                      //   auth().access_token
-                      // )
-                      // .then((post_result) => {
-                      //   // console.log(res);
-                      //   if (post_result) {
-                      //     console.log("error");
-                      //     console.log(post_result);
-                      //   }
-                      // });
+                      apiRequest
+                      .postOrderFailed(
+                        bodyError,
+                        auth().access_token
+                      )
+                      .then((post_result) => {
+                        // console.log(res);
+                        if (post_result) {
+                          console.log("error");
+                          console.log(post_result);
+                        }
+                      });
                     },
                     onClose: function () {
                       /* You may add your own implementation here */
@@ -1426,7 +1472,7 @@ function CheckoutPage() {
                                   >
                                     <CheckProductIsExistsInFlashSale
                                       id={item.product_id}
-                                      price={price(item)}
+                                      price={Math.round(price(item))}
                                     />
                                   </span>
                                 </div>
